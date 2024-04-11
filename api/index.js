@@ -11,7 +11,7 @@ const pool = mysql.createPool({
   host: '127.0.0.1',
   user: 'root',
   password: '',
-  database: 'crudapi',
+  database: 'sistemaacademico',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -22,9 +22,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API de CRUD de usuários',
+      title: 'API de CRUD de alunos',
       version: '1.0.0',
-      description: 'API para criar, ler, atualizar e deletar usuários'
+      description: 'API para criar, ler, atualizar e deletar alunos'
     },
     servers: [
       {
@@ -115,12 +115,12 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *         description: No Content
  */
 
-//exemplo: /users?nome=João 
+//exemplo: /alunos?nome=João 
 
-app.get('/users', async (req, res) => {
+app.get('/alunos', async (req, res) => {
   try {
     const { nome } = req.query;
-    let query = 'SELECT * FROM usuario';
+    let query = 'SELECT * FROM alunos';
     let params = [];
     
     if (nome) {
@@ -131,53 +131,53 @@ app.get('/users', async (req, res) => {
     const [rows] = await pool.query(query, params);
     res.json(rows);
   } catch (error) {
-    console.error("Erro ao recuperar usuários:", error);
-    res.status(500).send("Erro ao recuperar usuários");
+    console.error("Erro ao recuperar alunos:", error);
+    res.status(500).send("Erro ao recuperar alunos");
   }
 });
 
-app.post('/users', async (req, res) => {
+app.post('/alunos', async (req, res) => {
   try {
-    const { nome, idade } = req.body;
-    const [result] = await pool.query('INSERT INTO usuario (nome, idade) VALUES (?, ?)', [nome, idade]);
-    res.json({ id: result.insertId, nome:nome, idade:idade});
+    const { nome, rm } = req.body;
+    const [result] = await pool.query('INSERT INTO alunos (nome, rm) VALUES (?, ?)', [nome, rm]);
+    res.json({ id: result.insertId, nome:nome, rm:rm});
   } catch (error) {
-    console.error("Erro ao criar usuário:", error);
-    res.status(500).send("Erro ao criar usuário");
+    console.error("Erro ao criar alunos:", error);
+    res.status(500).send("Erro ao criar alunos");
   }
 });
 
-app.put('/users/:id', async (req, res) => {
+app.put('/alunos/:id', async (req, res) => {
   try {
-    const { nome, idade } = req.body;
+    const { nome, rm } = req.body;
     const { id } = req.params;
-    await pool.query('UPDATE usuario SET nome = ?, idade = ? WHERE id = ?', [nome, idade, id]);
-    res.status(200).json({ id: id, nome: nome, idade: idade });
+    await pool.query('UPDATE alunos SET nome = ?, rm = ? WHERE id = ?', [nome, rm, id]);
+    res.status(200).json({ id: id, nome: nome, rm: rm });
   } catch (error) {
-    console.error("Erro ao atualizar usuário:", error);
-    res.status(500).send("Erro ao atualizar usuário");
+    console.error("Erro ao atualizar alunos:", error);
+    res.status(500).send("Erro ao atualizar alunos");
   }
 });
 
-app.delete('/users/:id', async (req, res) => {
+app.delete('/alunos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query('DELETE FROM usuario WHERE id = ?', [id]);
+    await pool.query('DELETE FROM alunos WHERE id = ?', [id]);
     res.status(200).json({ id: Number(id) });
   } catch (error) {
-    console.error("Erro ao deletar usuário:", error);
-    res.status(500).send("Erro ao deletar usuário");
+    console.error("Erro ao deletar alunos:", error);
+    res.status(500).send("Erro ao deletar alunos");
   }
 });
 
-app.get('/users/:id', async (req, res) => {
+app.get('/alunos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.query('SELECT * FROM usuario WHERE id = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM alunos WHERE id = ?', [id]);
     res.status(200).json(rows);
   } catch (error) {
-    console.error("Erro ao buscar usuário:", error);
-    res.status(500).send("Erro ao buscar usuário");
+    console.error("Erro ao buscar alunos:", error);
+    res.status(500).send("Erro ao buscar alunos");
   }
 });
 
