@@ -5,44 +5,44 @@ import axios from 'axios';
 
 
 // Definindo a URL da API
-const API_URL = 'http://172.16.210.14:3000/users';
+const API_URL = 'http://172.16.7.19:3000/alunos';
 
 
 // Criando um componente para renderizar cada item da lista de usuários
-const UserItem = ({ user, onDelete, onEdit }) => {
+const AlunosItem = ({ alunos, onDelete, onEdit }) => {
   return (
-    <View style={styles.userItem}>
-      <Text style={styles.userName}>{user.nome}</Text>
-      <Text style={styles.userAge}>{user.idade}</Text>
-      <View style={styles.userActions}>
-        <Button title="Editar" onPress={() => onEdit(user)} />
-        <Button title="Excluir" onPress={() => onDelete(user.id)} />
+    <View style={styles.alunosItem}>
+      <Text style={styles.alunosName}>{alunos.nome}</Text>
+      <Text style={styles.alunosrm}>{alunos.rm}</Text>
+      <View style={styles.alunosActions}>
+        <Button title="Editar" onPress={() => onEdit(alunos)} />
+        <Button title="Excluir" onPress={() => onDelete(alunos.id)} />
       </View>
     </View>
   );
 };
 
 // Criando um componente para o formulário de cadastro e edição de usuários
-const UserForm = ({ user, onSave, onCancel }) => {
-  const [name, setName] = useState(user ? user.nome : '');
-  const [age, setAge] = useState(user ? user.idade : '');
+const AlunosForm = ({ alunos, onSave, onCancel }) => {
+  const [name, setName] = useState(alunos ? alunos.nome : '');
+  const [rm, setrm] = useState(alunos ? alunos.idade : '');
 
   const handleSubmit = () => {
-    if (user) {
+    if (alunos) {
       // Atualizando um usuário existente
-      axios.put(`${API_URL}/${user.id}`, { nome: name, idade: age })
+      axios.put(`${API_URL}/${alunos.id}`, { nome: name, rm: rm })
         .then(() => onSave())
         .catch((error) => alert(error.message));
     } else {
       // Criando um novo usuário
-      axios.post(API_URL, { nome: name, idade: age })
+      axios.post(API_URL, { nome: name, rm: rm })
         .then(() => onSave())
         .catch((error) => alert(error.message));
     }
   };
 
   return (
-    <View style={styles.userForm}>
+    <View style={styles.alunosForm}>
       <TextInput
         style={styles.input}
         placeholder="nome"
@@ -51,9 +51,9 @@ const UserForm = ({ user, onSave, onCancel }) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="idade"
-        value={age}
-        onChangeText={setAge}
+        placeholder="rm"
+        value={rm}
+        onChangeText={setrm}
         keyboardType="numeric"
       />
       <View style={styles.formActions}>
@@ -67,69 +67,69 @@ const UserForm = ({ user, onSave, onCancel }) => {
 
 // Criando um componente para a tela principal da aplicação
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [alunos, setAlunos] = useState([]);
+  const [selectedAlunos, setSelectedAlunos] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     // Buscando os usuários da API quando o componente é montado
-    fetchUsers();
+    fetchAlunos();
   }, []);
 
-  const fetchUsers = () => {
+  const fetchAlunos = () => {
     // Buscando os usuários da API e atualizando o estado
     axios.get(API_URL)
-      .then((response) => setUsers(response.data))
+      .then((response) => setAlunos (response.data))
       .catch((error) => alert(error.message));
   };
 
-  const handleDeleteUser = (id) => {
+  const handleDeleteAlunos = (id) => {
     // Excluindo um usuário da API e atualizando o estado
     axios.delete(`${API_URL}/${id}`)
-      .then(() => fetchUsers())
+      .then(() => fetchAlunos())
       .catch((error) => alert(error.message));
   };
 
-  const handleEditUser = (user) => {
+  const handleEditAlunos = (alunos) => {
     // Selecionando um usuário para editar e mostrando o formulário
-    setSelectedUser(user);
+    setSelectedAlunos(alunos);
     setShowForm(true);
   };
 
-  const handleSaveUser = () => {
+  const handleSaveAlunos = () => {
     // Escondendo o formulário e atualizando os usuários
     setShowForm(false);
-    fetchUsers();
+    fetchAlunos();
   };
 
-  const handleCancelUser = () => {
+  const handleCancelAlunos = () => {
     // Escondendo o formulário e limpando o usuário selecionado
     setShowForm(false);
-    setSelectedUser(null);
+    setSelectedAlunos(null);
   };
 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CRUD API com React Native</Text>
+      <Text style={styles.title}>CRUD API com React Native ALUNOS</Text>
       {showForm ? (
         // Mostrando o formulário se o estado showForm for verdadeiro
-        <UserForm
-          user={selectedUser}
-          onSave={handleSaveUser}
-          onCancel={handleCancelUser}
+        <AlunosForm
+          alunos={selectedAlunos}
+          onSave={handleSaveAlunos}
+          onCancel={handleCancelAlunos}
         />
       ) : (
         // Mostrando a lista de usuários se o estado showForm for falso
         <>
            <FlatList
-            data={users}
+            data={alunos}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <UserItem
-                user={item}
-                onDelete={handleDeleteUser}
-                onEdit={handleEditUser}
+              <AlunosItem
+                alunos={item}
+                onDelete={handleDeleteAlunos}
+                onEdit={handleEditAlunos}
               />
             )}
           />
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
   },
-  userItem: {
+  alunosItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
@@ -164,21 +164,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     borderRadius: 10,
   },
-  userName: {
+  alunosName: {
     flex: 1,
     fontSize: 18,
     fontWeight: 'bold',
   },
-  userAge: {
+  alunosrm: {
     flex: 1,
     fontSize: 18,
     textAlign: 'right',
   },
-  userActions: {
+  alunosActions: {
     flexDirection: 'row',
     marginLeft: 10,
   },
-  userForm: {
+  alunosForm: {
     padding: 10,
     marginVertical: 5,
     backgroundColor: '#eee',
