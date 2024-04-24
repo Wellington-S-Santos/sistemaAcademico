@@ -11,7 +11,7 @@ const pool = mysql.createPool({
   host: '127.0.0.1',
   user: 'root',
   password: '',
-  database: 'sistemaacademico',
+  database: 'crudapi',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -22,9 +22,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API de CRUD de alunos',
+      title: 'API de CRUD de usuarios',
       version: '1.0.0',
-      description: 'API para criar, ler, atualizar e deletar alunos'
+      description: 'API para criar, ler, atualizar e deletar usuarios'
     },
     servers: [
       {
@@ -42,7 +42,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
- * /users:
+ * /usuarios:
  *   get:
  *     summary: Retorna todos os usuários
  *     responses:
@@ -70,7 +70,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       '200':
  *         description: OK
  *
- * /users/{id}:
+ * /usuarios/{id}:
  *   put:
  *     summary: Atualiza um usuário existente
  *     parameters:
@@ -115,12 +115,12 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *         description: No Content
  */
 
-//exemplo: /alunos?nome=João 
+//exemplo: /usuarios?nome=João 
 
-app.get('/alunos', async (req, res) => {
+app.get('/usuarios', async (req, res) => {
   try {
     const { nome } = req.query;
-    let query = 'SELECT * FROM alunos';
+    let query = 'SELECT * FROM usuario';
     let params = [];
     
     if (nome) {
@@ -131,53 +131,53 @@ app.get('/alunos', async (req, res) => {
     const [rows] = await pool.query(query, params);
     res.json(rows);
   } catch (error) {
-    console.error("Erro ao recuperar alunos:", error);
-    res.status(500).send("Erro ao recuperar alunos");
+    console.error("Erro ao recuperar usuarios:", error);
+    res.status(500).send("Erro ao recuperar usuarios");
   }
 });
 
-app.post('/alunos', async (req, res) => {
+app.post('/usuarios', async (req, res) => {
   try {
     const { nome, rm } = req.body;
-    const [result] = await pool.query('INSERT INTO alunos (nome, rm) VALUES (?, ?)', [nome, rm]);
-    res.json({ id: result.insertId, nome:nome, rm:rm});
+    const [result] = await pool.query('INSERT INTO usuario (nome, rm) VALUES (?, ?)', [nome, idade]);
+    res.json({ id: result.insertId, nome:nome, idade:idade});
   } catch (error) {
-    console.error("Erro ao criar alunos:", error);
-    res.status(500).send("Erro ao criar alunos");
+    console.error("Erro ao criar usuarios:", error);
+    res.status(500).send("Erro ao criar usuarios");
   }
 });
 
-app.put('/alunos/:id', async (req, res) => {
+app.put('/usuarios/:id', async (req, res) => {
   try {
     const { nome, rm } = req.body;
     const { id } = req.params;
-    await pool.query('UPDATE alunos SET nome = ?, rm = ? WHERE id = ?', [nome, rm, id]);
+    await pool.query('UPDATE usuario SET nome = ?,idade = ? WHERE id = ?', [nome, idade, id]);
     res.status(200).json({ id: id, nome: nome, rm: rm });
   } catch (error) {
-    console.error("Erro ao atualizar alunos:", error);
-    res.status(500).send("Erro ao atualizar alunos");
+    console.error("Erro ao atualizar usuarios:", error);
+    res.status(500).send("Erro ao atualizar usuarios");
   }
 });
 
-app.delete('/alunos/:id', async (req, res) => {
+app.delete('/usuarios/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query('DELETE FROM alunos WHERE id = ?', [id]);
+    await pool.query('DELETE FROM usuario WHERE id = ?', [id]);
     res.status(200).json({ id: Number(id) });
   } catch (error) {
-    console.error("Erro ao deletar alunos:", error);
-    res.status(500).send("Erro ao deletar alunos");
+    console.error("Erro ao deletar usuarios:", error);
+    res.status(500).send("Erro ao deletar usuarios");
   }
 });
 
-app.get('/alunos/:id', async (req, res) => {
+app.get('/usuarios/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.query('SELECT * FROM alunos WHERE id = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM usuario WHERE id = ?', [id]);
     res.status(200).json(rows);
   } catch (error) {
-    console.error("Erro ao buscar alunos:", error);
-    res.status(500).send("Erro ao buscar alunos");
+    console.error("Erro ao buscar usuarios:", error);
+    res.status(500).send("Erro ao buscar usuarios");
   }
 });
 
