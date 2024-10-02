@@ -138,9 +138,9 @@ app.get('/usuarios', async (req, res) => {
 
 app.post('/usuarios', async (req, res) => {
   try {
-    const { nome, rm } = req.body;
-    const [result] = await pool.query('INSERT INTO usuario (nome, rm) VALUES (?, ?)', [nome, idade]);
-    res.json({ id: result.insertId, nome:nome, idade:idade});
+    const { nome,idade, rm } = req.body;
+    const [result] = await pool.query('INSERT INTO usuario (nome,idade, rm) VALUES (?, ?, ?)', [nome, idade,rm]);
+    res.json({ id: result.insertId, nome:nome, idade:idade, rm:rm});
   } catch (error) {
     console.error("Erro ao criar usuarios:", error);
     res.status(500).send("Erro ao criar usuarios");
@@ -149,10 +149,10 @@ app.post('/usuarios', async (req, res) => {
 
 app.put('/usuarios/:id', async (req, res) => {
   try {
-    const { nome, rm } = req.body;
+    const { nome, idade, rm } = req.body;
     const { id } = req.params;
-    await pool.query('UPDATE usuario SET nome = ?,idade = ? WHERE id = ?', [nome, idade, id]);
-    res.status(200).json({ id: id, nome: nome, rm: rm });
+    await pool.query('UPDATE usuario SET nome = ?,idade = ? , rm = ? WHERE id = ?', [nome, idade,rm, id]);
+    res.status(200).json({id: id, nome: nome, idade: idade,rm: rm });
   } catch (error) {
     console.error("Erro ao atualizar usuarios:", error);
     res.status(500).send("Erro ao atualizar usuarios");
